@@ -3621,6 +3621,7 @@ void SPIRVToLLVM::transIntelFPGADecorations(SPIRVValue *BV, Value *V) {
 
   SPIRVDBG(spvdbgs() << "Artem: [transIntelFPGADecorations]: "; 
                      V->dump(););
+  SPIRVDBG(spvdbgs() << "Artem: [transIntelFPGADecorations]: " << BV->getName() << "\n";);
   if (auto *Inst = dyn_cast<Instruction>(V)) {
     auto *AL = dyn_cast<AllocaInst>(Inst);
     Type *AllocatedTy = AL ? AL->getAllocatedType() : Inst->getType();
@@ -3715,7 +3716,7 @@ void SPIRVToLLVM::transIntelFPGADecorations(SPIRVValue *BV, Value *V) {
                              Builder.CreateBitCast(GS, Int8PtrTyPrivate),
                              UndefInt8Ptr, UndefInt32, UndefInt8Ptr};
       Builder.CreateCall(AnnotationFn, Args);
-      SPIRVDBG(spvdbgs() << "Artem: [transIntelFPGADecorations]: Everything else" << "\n");
+      SPIRVDBG(spvdbgs() << "Artem: [transIntelFPGADecorations]: Create annotation: " << (isStaticMemoryAttribute?"var_annotation":"ptr_annotation") << "\n");
     }
   } else if (auto *GV = dyn_cast<GlobalVariable>(V)) {
     std::vector<SmallString<256>> AnnotStrVec;

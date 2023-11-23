@@ -4194,6 +4194,11 @@ SPIRVValue *LLVMToSPIRVBase::transIntrinsicInst(IntrinsicInst *II,
   // clang::annotation attribute expression arguments.
   case Intrinsic::ptr_annotation: {
     Value *AnnotSubj = II->getArgOperand(0);
+    if (auto *BI = dyn_cast<BitCastInst>(II->getArgOperand(0))) {
+      AnnotSubj = BI->getOperand(0);
+    } else {
+      AnnotSubj = II->getOperand(0);
+    }
 
     std::string AnnotationString;
     processAnnotationString(II, AnnotationString);
@@ -4205,14 +4210,17 @@ SPIRVValue *LLVMToSPIRVBase::transIntrinsicInst(IntrinsicInst *II,
       auto *BI = dyn_cast<BitCastInst>(II->getOperand(0));
       if (BM->isAllowedToUseExtension(ExtensionID::SPV_INTEL_fpga_reg))
         return BM->addFPGARegINTELInst(Ty, transValue(BI, BB), BB);
+      SPIRVDBG(spvdbgs() << "Artem: [transIntrinsicInst]: Adding Bitcast" << "\n");
       return transValue(BI, BB);
     }
 
     SPIRVValue *DecSubj = transValue(AnnotSubj, BB);
     if (Decorations.empty()) {
+      SPIRVDBG(spvdbgs() << "Artem: [transIntrinsicInst]: Decorations.empty()" << "\n");
       DecSubj->addDecorate(
           new SPIRVDecorateUserSemanticAttr(DecSubj, AnnotationString.c_str()));
     } else {
+      SPIRVDBG(spvdbgs() << "Artem: [transIntrinsicInst]: !Decorations.empty()" << "\n");
       addAnnotationDecorations(DecSubj, Decorations.MemoryAttributesVec);
       // Apply the LSU parameter decoration to the pointer result of a GEP
       // to the given struct member (InBoundsPtrAccessChain in SPIR-V).
