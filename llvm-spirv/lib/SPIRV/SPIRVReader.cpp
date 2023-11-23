@@ -1281,6 +1281,7 @@ static void replaceOperandWithAnnotationIntrinsicCallResult(Function *F,
         if (II->getIntrinsicID() == Intrinsic::ptr_annotation &&
             II->getType() == BV->getType())
           CR = II;
+          SPIRVDBG(spvdbgs() << "Artem: [replaceOperandWithAnnotationIntrinsicCallResult]: "; II->dump(););
       }
     }
     return CR ? true : false;
@@ -2570,6 +2571,7 @@ Value *SPIRVToLLVM::transValueWithoutDecoration(SPIRVValue *BV, Function *F,
         Value *Args[] = {ValAsArg, GS, UndefInt8Ptr, UndefInt32, UndefInt8Ptr};
         auto *IntrinsicCall =
             Builder.CreateIntrinsic(IID, {RetTy, GS->getType()}, Args);
+        SPIRVDBG(spvdbgs() << "Artem: [transValueWithoutDecoration]: "; Val->dump(););
         return mapValue(BV, IntrinsicCall);
       }
     }
@@ -3617,6 +3619,8 @@ void SPIRVToLLVM::transIntelFPGADecorations(SPIRVValue *BV, Value *V) {
   if (!BV->isVariable() && !BV->isInst())
     return;
 
+  SPIRVDBG(spvdbgs() << "Artem: [transIntelFPGADecorations]: "; 
+                     V->dump(););
   if (auto *Inst = dyn_cast<Instruction>(V)) {
     auto *AL = dyn_cast<AllocaInst>(Inst);
     Type *AllocatedTy = AL ? AL->getAllocatedType() : Inst->getType();
@@ -3672,6 +3676,7 @@ void SPIRVToLLVM::transIntelFPGADecorations(SPIRVValue *BV, Value *V) {
               UndefInt32, UndefInt8Ptr};
           auto *PtrAnnotationCall = Builder.CreateCall(AnnotationFn, Args);
           GEPOrUseMap[AL][I] = PtrAnnotationCall;
+            SPIRVDBG(spvdbgs() << "Artem: [transIntelFPGADecorations]: Alloca" << "\n");
         }
       }
     }
@@ -3710,6 +3715,7 @@ void SPIRVToLLVM::transIntelFPGADecorations(SPIRVValue *BV, Value *V) {
                              Builder.CreateBitCast(GS, Int8PtrTyPrivate),
                              UndefInt8Ptr, UndefInt32, UndefInt8Ptr};
       Builder.CreateCall(AnnotationFn, Args);
+      SPIRVDBG(spvdbgs() << "Artem: [transIntelFPGADecorations]: Everything else" << "\n");
     }
   } else if (auto *GV = dyn_cast<GlobalVariable>(V)) {
     std::vector<SmallString<256>> AnnotStrVec;
@@ -3811,6 +3817,8 @@ void SPIRVToLLVM::transUserSemantic(SPIRV::SPIRVFunction *Fun) {
         UndefValue::get(Int8PtrTyPrivate), UndefValue::get(Int32Ty),
         UndefValue::get(Int8PtrTyPrivate)};
     GlobalAnnotations.push_back(ConstantStruct::getAnon(Fields));
+    SPIRVDBG(spvdbgs() << "Artem: [transUserSemantic]: "; 
+                     V->dump(););
   }
 }
 
