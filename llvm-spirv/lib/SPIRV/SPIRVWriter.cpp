@@ -2045,6 +2045,12 @@ LLVMToSPIRVBase::transValueWithoutDecoration(Value *V, SPIRVBasicBlock *BB,
     if (MemoryAccess.front() == 0)
       MemoryAccess.clear();
 
+    // Artem Seg fault here??
+    SPIRVDBG(spvdbgs() << "Artem: [transValueWithoutDecoration]: ST->getPointerOperand(): "; ST->getPointerOperand()->dump(););
+    SPIRVDBG(spvdbgs() << "Artem: [transValueWithoutDecoration]: ST->getValueOperand(): "; ST->getValueOperand()->dump(););
+    SPIRVDBG(spvdbgs() << "Artem: [transValueWithoutDecoration]: MemoryAccess.size(): " << MemoryAccess.size() << "\n");
+    SPIRVDBG(spvdbgs() << "Artem: [transValueWithoutDecoration]: MemoryAccess[0]: " << MemoryAccess[0] << "\n");
+
     return mapValue(V,
                     BM->addStoreInst(transValue(ST->getPointerOperand(), BB),
                                      transValue(ST->getValueOperand(), BB, true,
@@ -4234,7 +4240,8 @@ SPIRVValue *LLVMToSPIRVBase::transIntrinsicInst(IntrinsicInst *II,
         addAnnotationDecorations(DecSubj, Decorations.LatencyControlVec);
       }
     }
-    return DecSubj;
+    II->replaceAllUsesWith(II->getOperand(0));
+    return nullptr;
   }
   case Intrinsic::stacksave: {
     if (BM->isAllowedToUseExtension(
