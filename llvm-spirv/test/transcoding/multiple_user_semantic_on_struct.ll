@@ -88,18 +88,18 @@ define dso_local noundef i32 @main() #0 {
   ; CHECK-LLVM: %[[#GepClassAVal:]] = getelementptr inbounds %class.A, ptr %[[#ObjClassA]], i32 0, i32 0
   ; CHECK-LLVM: %[[#PtrAnnClassAVal:]] = call ptr @llvm.ptr.annotation{{.*}}(ptr %[[#GepClassAVal]], ptr @[[#StrStructA]]
   %7 = load i32, ptr %6, align 4
-  ; CHECK-LLVM: bitcast
-  ; CHECK-LLVM: %[[#LoadClassAVal:]] = bitcast ptr %[[#PtrAnnClassAVal]] to ptr
-  ; CHECK-LLVM: %[[#CallClassA:]] = load i32, ptr %[[#LoadClassAVal]], align 4
+ ; CHECK-LLVM: %[[#LoadClassAVal:]] = bitcast ptr %[[#PtrAnnClassAVal]] to ptr
+  ; CHECK-LLVM: %[[#LoadClassAVal2:]] = bitcast ptr %[[#LoadClassAVal]] to ptr
+  ; CHECK-LLVM: %[[#CallClassA:]] = load i32, ptr %[[#LoadClassAVal2]], align 4
   call void @_Z3fooi(i32 noundef %7)
   %8 = getelementptr inbounds %class.A, ptr %4, i32 0, i32 0
   %9 = call ptr @llvm.ptr.annotation.p0.p0(ptr %8, ptr @.str, ptr @.str.1, i32 11, ptr null)
   ; CHECK-LLVM: %[[#GepObj2ClassA:]] = getelementptr inbounds %class.A, ptr %[[#Obj2ClassA]], i32 0, i32 0
   ; CHECK-LLVM: %[[#PtrAnnObj2ClassA:]] = call ptr @llvm.ptr.annotation{{.*}}(ptr %[[#GepObj2ClassA]], ptr @[[#StrStructA]]
   %10 = load i32, ptr %9, align 4
-  ; CHECK-LLVM: bitcast
   ; CHECK-LLVM: %[[#LoadObj2ClassA:]] = bitcast ptr %[[#PtrAnnObj2ClassA]] to ptr
-  ; CHECK-LLVM: %[[#CallObj2ClassA:]] = load i32, ptr %[[#LoadObj2ClassA]], align 4
+  ; CHECK-LLVM: %[[#LoadObj2ClassA2:]] = bitcast ptr %[[#LoadObj2ClassA]] to ptr
+  ; CHECK-LLVM: %[[#CallObj2ClassA:]] = load i32, ptr %[[#LoadObj2ClassA2]], align 4
   call void @_Z3fooi(i32 noundef %10)
   %11 = getelementptr inbounds %class.A, ptr %2, i32 0, i32 1
   %12 = call ptr @llvm.ptr.annotation.p0.p0(ptr %11, ptr @.str.2, ptr @.str.1, i32 12, ptr null)
@@ -110,9 +110,9 @@ define dso_local noundef i32 @main() #0 {
   ; CHECK-LLVM: %[[#PtrAnn2MultiDec:]] = call ptr @llvm.ptr.annotation{{.*}}(ptr %[[#PtrAnnMultiDec]], ptr @[[#Dec2]]
   ; CHECK-LLVM: %[[#PtrAnn3MultiDec:]] = call ptr @llvm.ptr.annotation{{.*}}(ptr %[[#PtrAnnMultiDec]], ptr @[[#Dec3]]
   %15 = load i32, ptr %14, align 4
-  ; CHECK-LLVM: bitcast
   ; CHECK-LLVM: %[[#LoadMultiDec:]] = bitcast ptr %[[#PtrAnnMultiDec]] to ptr
-  ; CHECK-LLVM: %[[#CallClassAMultiDec:]] = load i32, ptr %[[#LoadMultiDec]], align 4
+  ; CHECK-LLVM: %[[#LoadMultiDec2:]] = bitcast ptr %[[#LoadMultiDec]] to ptr
+  ; CHECK-LLVM: %[[#CallClassAMultiDec:]] = load i32, ptr %[[#LoadMultiDec2]], align 4
   call void @_Z3fooi(i32 noundef %15)
   %16 = getelementptr inbounds %class.A, ptr %2, i32 0, i32 2
   %17 = call ptr @llvm.ptr.annotation.p0.p0(ptr %16, ptr @.str.5, ptr @.str.1, i32 13, ptr null)
@@ -120,23 +120,23 @@ define dso_local noundef i32 @main() #0 {
   ; CHECK-LLVM: %[[#PtrAnnClassAFieldB:]] = call ptr @llvm.ptr.annotation{{.*}}(ptr %[[#GepClassAFieldB]], ptr @[[#StrAfieldB]]
   %18 = getelementptr inbounds %class.B, ptr %17, i32 0, i32 0
   %19 = call ptr @llvm.ptr.annotation.p0.p0(ptr %18, ptr @.str.6, ptr @.str.1, i32 5, ptr null)
-  ; CHECK-LLVM: bitcast
   ; CHECK-LLVM: %[[#CastGepClassAFieldB:]] = bitcast ptr %[[#GepClassAFieldB]] to ptr
-  ; CHECK-LLVM: %[[#GEPClassB:]] = getelementptr inbounds %class.B, ptr %[[#CastGepClassAFieldB]], i32 0, i32 0
+  ; CHECK-LLVM: %[[#CastGepClassAFieldB2:]] = bitcast ptr %[[#CastGepClassAFieldB]] to ptr
+  ; CHECK-LLVM: %[[#GEPClassB:]] = getelementptr inbounds %class.B, ptr %[[#CastGepClassAFieldB2]], i32 0, i32 0
   ; CHECK-LLVM: %[[#PtrAnnClassB:]] = call ptr @llvm.ptr.annotation{{.*}}(ptr %[[#GEPClassB]], ptr @[[#StrStructB]]
   %20 = load i32, ptr %19, align 4
-  ; CHECK-LLVM: bitcast
   ; CHECK-LLVM: %[[#Cast2ClassB:]] = bitcast ptr %[[#PtrAnnClassB]] to ptr
-  ; CHECK-LLVM: %[[#CallClassAFieldB:]] = load i32, ptr %[[#Cast2ClassB]], align 4
+  ; CHECK-LLVM: %[[#Cast2ClassB2:]] = bitcast ptr %[[#Cast2ClassB]] to ptr
+  ; CHECK-LLVM: %[[#CallClassAFieldB:]] = load i32, ptr %[[#Cast2ClassB2]], align 4
   call void @_Z3fooi(i32 noundef %20)
   %21 = getelementptr inbounds %class.B, ptr %3, i32 0, i32 0
   %22 = call ptr @llvm.ptr.annotation.p0.p0(ptr %21, ptr @.str.6, ptr @.str.1, i32 5, ptr null)
   ; CHECK-LLVM: %[[#GEP2ClassB:]] = getelementptr inbounds %class.B, ptr %[[#ObjClassB]], i32 0, i32 0
   ; CHECK-LLVM: %[[#PtrAnn2ClassB:]] = call ptr @llvm.ptr.annotation{{.*}}(ptr %[[#GEP2ClassB]], ptr @[[#StrStructB]]
   %23 = load i32, ptr %22, align 4
-  ; CHECK-LLVM: bitcast
   ; CHECK-LLVM: %[[#Cast2ClassB:]] = bitcast ptr %[[#PtrAnn2ClassB]] to ptr
-  ; CHECK-LLVM: %[[#CallClassB:]] = load i32, ptr %[[#Cast2ClassB]], align 4
+  ; CHECK-LLVM: %[[#Cast2ClassB2:]] = bitcast ptr %[[#Cast2ClassB]] to ptr
+  ; CHECK-LLVM: %[[#CallClassB:]] = load i32, ptr %[[#Cast2ClassB2]], align 4
   call void @_Z3fooi(i32 noundef %23)
   ret i32 0
 }
