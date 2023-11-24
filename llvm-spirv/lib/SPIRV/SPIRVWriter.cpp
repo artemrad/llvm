@@ -4228,6 +4228,7 @@ SPIRVValue *LLVMToSPIRVBase::transIntrinsicInst(IntrinsicInst *II,
       // because multiple accesses to the struct-held memory can require
       // different LSU parameters.
       addAnnotationDecorations(DecSubj, Decorations.MemoryAccessesVec);
+      addAnnotationDecorations(DecSubj, Decorations.CacheControlVec);
       if (allowDecorateWithBufferLocationOrLatencyControlINTEL(II)) {
         addAnnotationDecorations(DecSubj, Decorations.BufferLocationVec);
         addAnnotationDecorations(DecSubj, Decorations.LatencyControlVec);
