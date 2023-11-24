@@ -11,12 +11,12 @@
 ; CHECK-SPIRV: Decorate [[#ARGA:]] LatencyControlLabelINTEL 0
 ; CHECK-SPIRV: Decorate [[#ARGB:]] LatencyControlLabelINTEL 1
 ; CHECK-SPIRV: Decorate [[#ARGB]] LatencyControlConstraintINTEL 0 1 5
+; CHECK-SPIRV: Bitcast
 ; CHECK-SPIRV: Bitcast [[#]] [[#OUT1:]] [[#ARGA]]
-; CHECK-SPIRV-DAG: Bitcast [[#]] [[#OUT2:]] [[#OUT1]]
-; CHECK-SPIRV-DAG: Load [[#]] [[#]] [[#OUT2]] [[#]] [[#]]
+; CHECK-SPIRV: Load [[#]] [[#]] [[#OUT1]] [[#]] [[#]]
+; CHECK-SPIRV: Bitcast
 ; CHECK-SPIRV: Bitcast [[#]] [[#OUT3:]] [[#ARGB]]
-; CHECK-SPIRV-DAG: Bitcast [[#]] [[#OUT4:]] [[#OUT3]]
-; CHECK-SPIRV-DAG: Load [[#]] [[#]] [[#OUT4]] [[#]] [[#]]
+; CHECK-SPIRV: Load [[#]] [[#]] [[#OUT3]] [[#]] [[#]]
 
 target datalayout = "e-i64:64-v16:16-v24:32-v32:32-v48:64-v96:128-v192:256-v256:256-v512:512-v1024:1024-n8:16:32:64"
 target triple = "spir64-unknown-unknown"
