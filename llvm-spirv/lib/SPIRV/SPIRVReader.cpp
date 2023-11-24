@@ -995,7 +995,7 @@ Value *SPIRVToLLVM::transValue(SPIRVValue *BV, Function *F, BasicBlock *BB,
   if (Loc != ValueMap.end() && (!PlaceholderMap.count(BV) || CreatePlaceHolder))
     return Loc->second;
 
-  SPIRVDBG(spvdbgs() << "[transValue] " << *BV << " -> ";)
+  SPIRVDBG(spvdbgs() << "[transValue] " << *BV << " -> \n";)
   BV->validate();
 
   auto *V = transValueWithoutDecoration(BV, F, BB, CreatePlaceHolder);
@@ -1003,6 +1003,8 @@ Value *SPIRVToLLVM::transValue(SPIRVValue *BV, Function *F, BasicBlock *BB,
     SPIRVDBG(dbgs() << " Warning ! nullptr\n";)
     return nullptr;
   }
+  SPIRVDBG(spvdbgs() << "Artem: [transValue]: New: ";
+        V->dump(););
   setName(V, BV);
   if (!transDecoration(BV, V)) {
     assert(0 && "trans decoration fail");
@@ -3715,8 +3717,11 @@ void SPIRVToLLVM::transIntelFPGADecorations(SPIRVValue *BV, Value *V) {
       llvm::Value *Args[] = {BaseInst,
                              Builder.CreateBitCast(GS, Int8PtrTyPrivate),
                              UndefInt8Ptr, UndefInt32, UndefInt8Ptr};
-      Builder.CreateCall(AnnotationFn, Args);
-      SPIRVDBG(spvdbgs() << "Artem: [transIntelFPGADecorations]: Create annotation: " << (isStaticMemoryAttribute?"var_annotation":"ptr_annotation") << "\n");
+      llvm::CallInst* AnnotationInst = Builder.CreateCall(AnnotationFn, Args);
+      SPIRVDBG(spvdbgs() << "Artem: [transIntelFPGADecorations]: New: ";
+        AnnotationInst->dump(););
+      // Artem
+      // replaceOperandWithAnnotationIntrinsicCallResult(AnnotationInst->getFunction(), AnnotationInst);
     }
   } else if (auto *GV = dyn_cast<GlobalVariable>(V)) {
     std::vector<SmallString<256>> AnnotStrVec;
